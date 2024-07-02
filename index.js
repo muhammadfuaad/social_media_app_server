@@ -37,6 +37,7 @@ app.post("/login", async(req, res)=>{
 })
 
 app.post("/profile", verifyToken, (req, res)=>{
+  console.log("req.token:", req.token);
   jwt.verify(req.token, secretKey, (err, authData)=>{
     if(err) {
       res.send("Error is there")
@@ -61,9 +62,6 @@ function verifyToken(req, res, next) {
     console.log("req.token:", req.token);
     console.log("bearer:", bearer);
     console.log("bearerHeader:", bearerHeader);
-
-
-
   } else {
     res.send("Wow There is some error")
   }
