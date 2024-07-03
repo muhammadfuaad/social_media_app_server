@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
 // Here, you define a Mongoose schema using "mongoose.Schema". A schema in Mongoose defines the structure of 
 // documents within a collection in a MongoDB database.
 
-module.exports = mongoose.model("users", userSchema)
+module.exports = mongoose.model("users_1", userSchema)
 // This line exports a Mongoose model based on the userSchema. The mongoose.model method creates a model by taking
 //  two arguments: the name of the collection (in this case, "users") and the schema (userSchema).
 

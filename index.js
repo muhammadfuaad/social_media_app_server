@@ -27,6 +27,18 @@ app.post("/login", async (req, res) => {
   });
 });
 
+function verifyToken(req, res, next) {
+  const bearerHeader = req.headers["authorization"];
+  
+  if (typeof bearerHeader !== "undefined") {
+    const bearerToken = bearerHeader.split(" ")[1];
+    req.token = bearerToken;
+    next();
+  } else {
+    res.sendStatus(403); // Forbidden
+  }
+}
+
 app.post("/profile", verifyToken, (req, res) => {
   jwt.verify(req.token, secretKey, (err, authData) => {
     if (err) {
@@ -40,17 +52,6 @@ app.post("/profile", verifyToken, (req, res) => {
   });
 });
 
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers['authorization'];
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(' ');
-    const token = bearer[1];
-    req.token = token;
-    next();
-  } else {
-    res.sendStatus(403);
-  }
-}
 
 app.listen(PORT, () => {
   console.log(`server is running at ${PORT}`);
