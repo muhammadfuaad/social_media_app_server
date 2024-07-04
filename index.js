@@ -78,6 +78,18 @@ app.post("/profile", verifyToken, (req, res) => {
   });
 });
 
+app.get("/user_posts", verifyToken, async(req, res)=>{
+  jwt.verify(req.token, secretKey, async(err, authData) => {
+    if (err) {
+      res.send("Token couldn't be verified");
+    } else {
+      const data = await Post.find({user_id: authData.user_id})
+      console.log("data:", data);
+      res.send(data)
+    }
+  });
+})
+
 app.post("/new_post", verifyToken, (req, res) => {
   jwt.verify(req.token, secretKey, async(err, authData) => {
     if (err) {
@@ -87,10 +99,6 @@ app.post("/new_post", verifyToken, (req, res) => {
       let data = new Post(post);
       let result = await data.save();
       res.send(result);
-      // res.json({
-      //   msg: "Token verified successfully",
-      //   authData
-      // });
     }
   });
 });
