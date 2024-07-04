@@ -48,23 +48,7 @@ app.post("/login", async (req, res) => {
   } else {
       console.log("none of the above");
   }
-
-
-
-  
 });
-
-// function verifyToken(req, res, next) {
-//   const bearerHeader = req.headers["authorization"];
-  
-//   if (typeof bearerHeader !== "undefined") {
-//     const bearerToken = bearerHeader.split(" ")[1];
-//     req.token = bearerToken;
-//     next();
-//   } else {
-//     res.sendStatus(403); // Forbidden
-//   }
-// }
 
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
@@ -74,6 +58,7 @@ function verifyToken(req, res, next) {
     const bearer = bearerHeader.split(" ");
     if (bearer.length === 2 && bearer[0] === "Bearer") {
       const bearerToken = bearer[1];
+      console.log("req.token:", req.token);
       req.token = bearerToken;
       next();
     } else {
@@ -96,7 +81,6 @@ app.post("/profile", verifyToken, (req, res) => {
     }
   });
 });
-
 
 app.listen(PORT, () => {
   console.log(`server is running at ${PORT}`);
