@@ -3,14 +3,13 @@ const mongoose = require("mongoose")
 // library for MongoDB and provides a straightforward way to model your application data and interact with MongoDB databases.
 
 const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String
+  content: String,
+  user_id: Number
 })
 // Here, you define a Mongoose schema using "mongoose.Schema". A schema in Mongoose defines the structure of 
 // documents within a collection in a MongoDB database.
 
-module.exports = mongoose.model("users", userSchema)
+module.exports = mongoose.model("posts", userSchema)
 // This line exports a Mongoose model based on the userSchema. The mongoose.model method creates a model by taking
 //  two arguments: the name of the collection (in this case, "users") and the schema (userSchema).
 
