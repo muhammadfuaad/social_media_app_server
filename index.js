@@ -3,6 +3,7 @@ const PORT = 3000;
 const jwt = require("jsonwebtoken");
 const secretKey = "secretkey";
 const User = require("./user");
+const Post = require("./post")
 const cors = require('cors');
 require("./config");
 
@@ -21,17 +22,12 @@ app.post("/login", async (req, res) => {
   console.log("user.email:", user.email);
   const editUserArray = await User.find({email: user.email}).exec()
   const editUser = editUserArray[0]
-  console.log("editUser:", editUser); 
-  console.log("editUser.password:", editUser.password); 
-
-  console.log("typeof editUser.password:", typeof editUser.password); 
-  console.log("typeof user.password:", typeof user.password); 
 
   if (editUser.length !== 0 && user.password === editUser.password) {
       // res.send("User exists and password is correct");
       console.log("User exists and password is correct");
       
-      jwt.sign({ user }, secretKey, (err, token) => {
+      jwt.sign({ user_id: editUser._id }, secretKey, (err, token) => {
         if (err) {
           res.status(500).send('Error signing token');
         } else {
@@ -78,6 +74,23 @@ app.post("/profile", verifyToken, (req, res) => {
         msg: "Token verified successfully",
         authData
       });
+    }
+  });
+});
+
+app.post("/new_post", verifyToken, (req, res) => {
+  jwt.verify(req.token, secretKey, async(err, authData) => {
+    if (err) {
+      res.send("Token couldn't be verified");
+    } else {
+      const post = {content: req.body.content, user_id: authData.user_id}
+      let data = new Post(post);
+      let result = await data.save();
+      res.send(result);
+      // res.json({
+      //   msg: "Token verified successfully",
+      //   authData
+      // });
     }
   });
 });
