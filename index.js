@@ -78,6 +78,7 @@ app.post("/profile", verifyToken, (req, res) => {
   });
 });
 
+// user posts api
 app.get("/user_posts", verifyToken, async(req, res)=>{
   jwt.verify(req.token, secretKey, async(err, authData) => {
     if (err) {
@@ -102,6 +103,35 @@ app.post("/new_post", verifyToken, (req, res) => {
     }
   });
 });
+
+app.delete("/delete_post/:_id", async (req, res)=>{
+  console.log(req.params);
+  try {
+    let data = await Post.deleteOne(req.params)
+    res.send({
+      message: "Post successfully deleted",
+      data: data
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Error deleting the post",
+      error: error
+    });
+  }
+})
+
+app.put("/update/:_id", async (req, res)=>{
+  console.log(req.params);
+  let data = await User.updateOne(
+    req.params,
+    {
+      $set: req.body
+    }
+  )
+  let changedData = User.find({_id: req.params})
+  let changedData2 = JSON.stringify(changedData)
+  res.send({"data": data, "changedData": (changedData2)}) 
+})
 
 app.listen(PORT, () => {
   console.log(`server is running at ${PORT}`);
