@@ -93,15 +93,18 @@ app.get("/user_posts", verifyToken, async(req, res)=>{
 
 app.post("/new_post", verifyToken, (req, res) => {
   jwt.verify(req.token, secretKey, async(err, authData) => {
-    if (err) {
-      res.send("Token couldn't be verified");
-    } else {
+    try {
       const post = {content: req.body.content, user_id: authData.user_id}
       let data = new Post(post);
       let result = await data.save();
-      res.send(result);
+      res.status(200).send({
+        message: "Post added successfiully",
+        result: result
+      });
+    } catch (err) {
+      res.send("Token couldn't be verified");
     }
-  });
+  })
 });
 
 app.delete("/delete_post/:_id", async (req, res)=>{
@@ -120,17 +123,26 @@ app.delete("/delete_post/:_id", async (req, res)=>{
   }
 })
 
-app.put("/update/:_id", async (req, res)=>{
+app.put("/update_post/:_id", async (req, res)=>{
   console.log(req.params);
-  let data = await User.updateOne(
-    req.params,
+  console.log(req.body);
+
+  try {
+  let data = await Post.updateOne(
+    {_id: req.params._id},
     {
-      $set: req.body
+      $set: {content: req.body.content}
     }
   )
-  let changedData = User.find({_id: req.params})
+  let changedData = await Post.find({_id: req.params})
   let changedData2 = JSON.stringify(changedData)
-  res.send({"data": data, "changedData": (changedData2)}) 
+  res.send({message: "Post updated successfully", "data": data, "changedData": (changedData2)}) 
+} catch (error) {
+  res.status(500).send({
+    message: "Error deleting the post",
+    error: error
+  });
+}
 })
 
 app.listen(PORT, () => {
