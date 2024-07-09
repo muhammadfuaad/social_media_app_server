@@ -7,6 +7,7 @@ const Post = require("./Models/post")
 const cors = require('cors');
 require("./config");
 const userRouter = require("./routers/userRoute")
+const verifyToken = require("./Middlewares/verifyToken")
 
 const app = express();
 app.use(cors());

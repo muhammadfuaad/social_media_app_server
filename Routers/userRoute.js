@@ -1,6 +1,9 @@
 const express = require("express")
 const userRouter = express.Router();
 const User = require("../Models/user")
+const verifyToken = require("../Middlewares/verifyToken")
+const jwt = require("jsonwebtoken");
+const secretKey = "secretkey";
 
 userRouter.post("/register", async (req, res) => {
   console.log("req.body:", req.body);
@@ -44,25 +47,6 @@ userRouter.post("/login", async (req, res) => {
       // console.log("none of the above");
   }
 });
-
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
-  // console.log("bearerHeader:", bearerHeader);
-  
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(" ");
-    if (bearer.length === 2 && bearer[0] === "Bearer") {
-      const bearerToken = bearer[1];
-      // console.log("req.token:", req.token);
-      req.token = bearerToken;
-      next();
-    } else {
-      res.sendStatus(403); // Forbidden
-    }
-  } else {
-    res.sendStatus(403); // Forbidden
-  }
-}
 
 // profile
 userRouter.post("/profile", verifyToken, (req, res) => {
