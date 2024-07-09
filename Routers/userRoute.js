@@ -5,6 +5,7 @@ const verifyToken = require("../Middlewares/verifyToken")
 const jwt = require("jsonwebtoken");
 const secretKey = "secretkey";
 
+// register
 userRouter.post("/register", async (req, res) => {
   console.log("req.body:", req.body);
   const data = await User.find({email: req.body.email})
@@ -61,5 +62,18 @@ userRouter.post("/profile", verifyToken, (req, res) => {
     }
   });
 });
+
+// all users api
+userRouter.get("/users", verifyToken, async(req, res)=>{
+  jwt.verify(req.token, secretKey, async(err, authData) => {
+    if (err) {
+      res.send("Token couldn't be verified");
+    } else {
+      const data = await User.find({})
+      // console.log("data:", data);
+      res.send(data)
+    }
+  });
+})
 
 module.exports = userRouter
