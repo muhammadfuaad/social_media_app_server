@@ -5,7 +5,24 @@ const mongoose = require("mongoose")
 const postSchema = new mongoose.Schema({
   content: String,
   user_id: String,
-  user_name: String
+  user_name: String,
+  comments: [
+    {
+      user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      content: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 })
 // Here, you define a Mongoose schema using "mongoose.Schema". A schema in Mongoose defines the structure of 
 // documents within a collection in a MongoDB database.
