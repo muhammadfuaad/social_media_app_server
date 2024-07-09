@@ -2,27 +2,18 @@ const express = require("express");
 const PORT = 3000;
 const jwt = require("jsonwebtoken");
 const secretKey = "secretkey";
-const User = require("./user");
-const Post = require("./post")
+const User = require("./Models/user");
+const Post = require("./Models/post")
 const cors = require('cors');
 require("./config");
+const userRouter = require("./routers/userRoute")
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // register
-app.post("/register", async (req, res) => {
-  console.log("req.body:", req.body);
-  const data = await User.find({email: req.body.email})
-  if (data.length > 0) {
-    res.status(200).send({message: "User already registered"})
-  } else {
-    let data1 = new User(req.body);
-    let result = await data1.save();
-    res.send(result);
-  }
-});
+app.use('/', userRouter);
 
 // login
 app.post("/login", async (req, res) => {
