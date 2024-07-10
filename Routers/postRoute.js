@@ -11,7 +11,7 @@ postRouter.get("/user_posts", verifyToken, async(req, res)=>{
     if (err) {
       res.send("Token couldn't be verified");
     } else {
-      const data = await Post.find({user_id: authData.user_id})
+      const data = await Post.find({user_id: authData.user_id}).populate("user_id", "name")
       // console.log("data:", data);
       res.json({data: data, user_id: authData.user_id})
     }
@@ -21,25 +21,8 @@ postRouter.get("/user_posts", verifyToken, async(req, res)=>{
 postRouter.post("/new_post", verifyToken, (req, res) => {
   jwt.verify(req.token, secretKey, async(err, authData) => {
     try {
-      const post = {content: req.body.content, user_id: authData.user_id, user_name: authData.user_name}
+      const post = {content: req.body.content, user_id: authData.user_id}
       let data = new Post(post);
-      let result = await data.save();
-      console.log("authData:", authData);
-      res.status(200).send({
-        message: "Post added successfiully",
-        result: result
-      });
-    } catch (err) {
-      res.send("Token couldn't be verified");
-    }
-  })
-});
-
-postRouter.post("/new_comment", verifyToken, (req, res) => {
-  jwt.verify(req.token, secretKey, async(err, authData) => {
-    try {
-      const comment = {content: req.body.content, user_id: authData.user_id}
-      let data = new Post(comment);
       let result = await data.save();
       console.log("authData:", authData);
       res.status(200).send({
