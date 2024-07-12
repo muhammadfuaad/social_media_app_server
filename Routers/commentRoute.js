@@ -24,10 +24,28 @@ commentRouter.post("/add_comment/:postId", verifyToken, async (req, res) => {
       let data = new Comment(comment);
       let result = await data.save();
       console.log("result:", result);
+      const io = req.app.get('io');
+      io.emit('new_comment', result);
 
       res.status(200).send({
         message: "Comment added successfully"
       });
+    } catch (err) {
+      res.status(500).send({ message: "Error adding comment", error: err });
+    }
+  });
+});
+
+commentRouter.get("/comments/:postId", verifyToken, async (req, res) => {
+  jwt.verify(req.token, secretKey, async (err, authData) => {
+    if (err) {
+      return res.status(403).send("Token couldn't be verified");
+    }
+    const postId = req.params.postId;
+
+    try {
+      const data = await Comment.find({post_id: postId})
+      res.json({data: data, message: "Comments fteched successfully"})
     } catch (err) {
       res.status(500).send({ message: "Error adding comment", error: err });
     }

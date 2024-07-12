@@ -1,5 +1,15 @@
+const http = require("http")
 const express = require("express");
 const app = express();
+const server = http.createServer(app);
+const socketIo = require('socket.io');
+// const io = socketIo(server);
+const io = socketIo(server, {
+   cors: {
+     origin: "http://localhost:5173",
+     methods: ["GET", "POST"]
+   }
+ });
 
 const PORT = 3000;
 const cors = require('cors');
@@ -25,10 +35,13 @@ io.on('connection', function(socket){
    });
 });
 
+ // Make io available to routes
+ app.set('io', io);
+
 app.use('/', userRouter);
 app.use('/', postRouter)
 app.use('/', commentRouter)
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server is running at ${PORT}`);
 });

@@ -76,7 +76,7 @@ postRouter.get("/all_posts", verifyToken, async(req, res)=>{
     if (err) {
       res.send("Token couldn't be verified");
     } else {
-      const data = await Post.find({})
+      const data = await Post.find({}).populate("user_id", "name")
       // console.log("data:", data);
       res.send(data)
     }
