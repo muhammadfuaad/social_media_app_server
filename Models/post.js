@@ -4,12 +4,11 @@ const mongoose = require("mongoose")
 
 const postSchema = new mongoose.Schema({
   content: String,
-  user_id: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },
-  user_name: String,
   createdAt: {
     type: Date,
     default: Date.now,

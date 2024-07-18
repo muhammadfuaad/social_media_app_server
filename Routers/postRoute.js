@@ -11,9 +11,9 @@ postRouter.get("/user_posts", verifyToken, async(req, res)=>{
     if (err) {
       res.send("Token couldn't be verified");
     } else {
-      const data = await Post.find({user_id: authData.user_id}).populate("user_id", "name")
+      const data = await Post.find({userId: authData.userId}).populate("userId", "name")
       // console.log("data:", data);
-      res.json({data: data, user_id: authData.user_id})
+      res.json({data: data, userId: authData.userId})
     }
   });
 })
@@ -21,7 +21,7 @@ postRouter.get("/user_posts", verifyToken, async(req, res)=>{
 postRouter.post("/new_post", verifyToken, (req, res) => {
   jwt.verify(req.token, secretKey, async(err, authData) => {
     try {
-      const post = {content: req.body.content, user_id: authData.user_id}
+      const post = {content: req.body.content, userId: authData.userId}
       let data = new Post(post);
       let result = await data.save();
       console.log("authData:", authData);
@@ -76,7 +76,7 @@ postRouter.get("/all_posts", verifyToken, async(req, res)=>{
     if (err) {
       res.send("Token couldn't be verified");
     } else {
-      const data = await Post.find({}).populate("user_id", "name")
+      const data = await Post.find({}).populate("userId", "name")
       // console.log("data:", data);
       res.send(data)
     }

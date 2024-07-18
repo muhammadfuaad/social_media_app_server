@@ -30,7 +30,7 @@ userRouter.post("/login", async (req, res) => {
       // res.send("User exists and password is correct");
       // console.log("User exists and password is correct");
       
-      jwt.sign({ user_id: editUser._id, user_name: editUser.name }, secretKey, (err, token) => {
+      jwt.sign({ userId: editUser._id, user_name: editUser.name }, secretKey, (err, token) => {
         if (err) {
           res.status(500).send('Error signing token');
         } else {
