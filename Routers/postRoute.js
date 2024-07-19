@@ -83,4 +83,66 @@ postRouter.get("/all_posts", verifyToken, async(req, res)=>{
   });
 })
 
+postRouter.post("/like_post/:_id", verifyToken, async (req, res)=>{
+  console.log(req.params);
+  jwt.verify(req.token, secretKey, async(err, authData) => {
+    if (err) {
+      res.send("Token couldn't be verified");
+    } 
+    
+    try {
+      const editPost = await Post.findById(req.params._id)
+      console.log(editPost);
+      const alreadyLiked = editPost.likes.some(like => like.userId.toString() === authData.userId.toString());
+      if (alreadyLiked) {
+        console.log('already liked');
+        const result = await Post.updateOne({_id: req.params._id}, { $pull: { likes: { userId: authData.userId } } })
+        console.log(result);
+      } else {
+        const result = await Post.updateOne({_id: req.params._id}, { $push: { likes: { userId: authData.userId } } })
+        console.log(result);
+        console.log('liked now');
+      }
+    }
+    catch (error) {
+      console.error('Error processing like/unlike:', error);
+      res.status(500).send('Server error');
+    }
+  })
+})
+
+// postRouter.post("/like_post/:_id", verifyToken, async (req, res) => {
+//   console.log('req.params:', req.params);
+//   jwt.verify(req.token, secretKey, async (err, authData) => {
+//     if (err) {
+//       res.send("Token couldn't be verified");
+//     } else {
+//       try {
+//         const editPost = await Post.findById(req.params._id);
+//         if (!editPost) {
+//           return res.status(404).send("Post not found");
+//         }
+//         console.log('editPost:', editPost);
+//         console.log('editPost.content:', editPost.content);
+
+//         // const likes = editPost.likes;
+//         // console.log('likes:', likes);
+
+//         // likes.push({ userId: authData.userId });
+//         // console.log('updated likes:', likes);
+
+//         const result = await Post.updateOne(
+//           { _id: req.params._id },
+//           { $push: { likes: { userId: authData.userId } } }
+//         );
+//         console.log('result:', result);
+//         res.send("Like added successfully");
+//       } catch (error) {
+//         console.error('Error updating post:', error);
+//         res.status(500).send("Internal Server Error");
+//       }
+//     }
+//   });
+// });
+
 module.exports = postRouter
