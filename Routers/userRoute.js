@@ -9,12 +9,16 @@ const secretKey = "secretkey";
 userRouter.post("/register", async (req, res) => {
   console.log("req.body:", req.body);
   const data = await User.find({email: req.body.email})
+  console.log('data:', data);
+
   if (data.length > 0) {
     res.status(400).send({message: "User already registered"})
   } else {
     let data1 = new User(req.body);
     let result = await data1.save();
-    res.send(result);
+    res.status(200).json({message: "User successfully registered", result})
+    // res.send({message: "User successfully registered", result})
+    // question: what's the difference bwteen above two statements?
   }
 });
 
