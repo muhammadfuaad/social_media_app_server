@@ -3,8 +3,8 @@ const postRouter = express.Router();
 const Post = require("../Models/post")
 const verifyToken = require("../Middlewares/verifyToken")
 const jwt = require("jsonwebtoken");
-const cors = require("cors")
 const secretKey = "secretkey";
+
 // user posts api
 postRouter.get("/user_posts", verifyToken, async(req, res)=>{
   jwt.verify(req.token, secretKey, async(err, authData) => {
@@ -95,13 +95,16 @@ postRouter.post("/like_post/:_id", verifyToken, async (req, res)=>{
       console.log(editPost);
       const alreadyLiked = editPost.likes.some(like => like.userId.toString() === authData.userId.toString());
       if (alreadyLiked) {
-        console.log('already liked');
+        console.log('unliked');
         const result = await Post.updateOne({_id: req.params._id}, { $pull: { likes: { userId: authData.userId } } })
         console.log(result);
+        res.send('unliked')
+
       } else {
         const result = await Post.updateOne({_id: req.params._id}, { $push: { likes: { userId: authData.userId } } })
         console.log(result);
-        console.log('liked now');
+        console.log('liked');
+        res.send('liked')
       }
     }
     catch (error) {
