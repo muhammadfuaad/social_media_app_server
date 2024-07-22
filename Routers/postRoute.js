@@ -94,16 +94,21 @@ postRouter.post("/like_post/:_id", verifyToken, async (req, res)=>{
       const editPost = await Post.findById(req.params._id)
       console.log(editPost);
       const alreadyLiked = editPost.likes.some(like => like.userId.toString() === authData.userId.toString());
+      const io = req.app.get('io');
+
       if (alreadyLiked) {
         console.log('unliked');
         const result = await Post.updateOne({_id: req.params._id}, { $pull: { likes: { userId: authData.userId } } })
         console.log(result);
+
+        io.emit('post_unliked', { postId: req.params._id, userId: authData.userId });
         res.send('unliked')
 
       } else {
         const result = await Post.updateOne({_id: req.params._id}, { $push: { likes: { userId: authData.userId } } })
         console.log(result);
         console.log('liked');
+        io.emit('post_liked', { postId: req.params._id, userId: authData.userId });
         res.send('liked')
       }
     }
