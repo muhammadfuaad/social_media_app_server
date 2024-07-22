@@ -27,29 +27,27 @@ userRouter.post("/login", async (req, res) => {
   const user = req.body;
   // console.log("user.email:", user.email);
   const editUserArray = await User.find({email: user.email}).exec()
+  // question: whats the use of '.exec()' ?
   const editUser = editUserArray[0]
   console.log("editUser:", editUser);
 
   if (editUser.length !== 0 && user.password === editUser.password) {
-      // res.send("User exists and password is correct");
       // console.log("User exists and password is correct");
       
       jwt.sign({ userId: editUser._id, user_name: editUser.name }, secretKey, (err, token) => {
         if (err) {
-          res.status(500).send('Error signing token');
+          res.status(500).json({message: 'Error signing token'});
         } else {
-          res.json({ token });
+          res.status(200).json({ message: 'Token successfully generated', token });
         }
       });
 
   } else if (editUser.length === 0) {
-      // res.send("User doesn't exist");
-      // console.log("User doesn't exist");
+    // console.log("User doesn't exist");
   } else if (editUser.length !== 0 && user.password !== editUser.password) {
-      // res.send("User exists but password is incorrect");
-      // console.log("User exists but password is incorrect");
+    // console.log("User exists but password is incorrect");
   } else {
-      // console.log("none of the above");
+    // console.log("none of the above");
   }
 });
 
